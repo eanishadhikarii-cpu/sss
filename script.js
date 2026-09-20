@@ -1,5 +1,82 @@
 // Love Website JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Keep the main page behind the romantic unlock moment until it succeeds.
+    const lockScreen = document.getElementById('lockScreen');
+    const unlockForm = document.getElementById('unlockForm');
+    const secretCodeInput = document.getElementById('secretCodeInput');
+    const unlockButton = document.getElementById('unlockButton');
+    const unlockMessage = document.getElementById('unlockMessage');
+    const unlockWelcome = document.getElementById('unlockWelcome');
+    const lockIcon = document.getElementById('lockIcon');
+    const secretKeypad = document.getElementById('secretKeypad');
+
+    if (secretKeypad) {
+        secretKeypad.addEventListener('click', function(event) {
+            const key = event.target.closest('[data-key]');
+            if (!key || secretCodeInput.disabled) return;
+
+            const keyValue = key.dataset.key;
+            if (keyValue === 'clear') {
+                secretCodeInput.value = '';
+            } else if (keyValue === 'backspace') {
+                secretCodeInput.value = secretCodeInput.value.slice(0, -1);
+            } else if (secretCodeInput.value.length < secretCodeInput.maxLength) {
+                secretCodeInput.value += keyValue;
+            }
+            secretCodeInput.focus();
+        });
+    }
+
+    function createUnlockCelebration() {
+        const symbols = ['❤️', '💕', '💖', '✨', '💗', '💘', '🎉'];
+        for (let index = 0; index < 34; index++) {
+            const particle = document.createElement('span');
+            particle.className = 'unlock-celebration';
+            particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${55 + Math.random() * 35}vh`;
+            particle.style.setProperty('--unlock-drift', `${(Math.random() - 0.5) * 38}vw`);
+            particle.style.animationDelay = `${Math.random() * 0.45}s`;
+            lockScreen.appendChild(particle);
+            setTimeout(() => particle.remove(), 3000);
+        }
+    }
+
+    function unlockWebsite() {
+        secretCodeInput.value = '';
+        unlockMessage.textContent = '';
+        unlockButton.disabled = true;
+        secretCodeInput.disabled = true;
+        lockIcon.textContent = '❤️';
+        lockIcon.classList.add('is-open');
+        unlockWelcome.classList.add('visible');
+        lockScreen.classList.add('unlocking');
+        createUnlockCelebration();
+
+        setTimeout(() => document.body.classList.add('unlocked'), 450);
+        setTimeout(() => {
+            lockScreen.classList.add('hidden');
+            lockScreen.setAttribute('aria-hidden', 'true');
+        }, 1500);
+    }
+
+    if (lockScreen && unlockForm) {
+        unlockForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (secretCodeInput.value.trim() === String(window.CONFIG.secretCode)) {
+                unlockWebsite();
+                return;
+            }
+
+            lockScreen.classList.remove('wrong-code');
+            void lockScreen.offsetWidth;
+            lockScreen.classList.add('wrong-code');
+            unlockMessage.textContent = "Hmm… that's not it, my love 😏 Try again!";
+            secretCodeInput.value = '';
+            secretCodeInput.focus();
+        });
+    }
     
     // Apply configuration
     function applyConfig() {
@@ -7,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update subtitle
             const subtitle = document.getElementById('subtitle');
             if (subtitle) {
-                subtitle.textContent = `${CONFIG.partnerName}, ${CONFIG.messages.subtitle}`;
+                subtitle.textContent = '';
+                subtitle.style.display = 'none';
             }
             
             // Update partner name and description
@@ -62,7 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const specialMessage1 = document.getElementById('specialMessage1');
             if (specialMessage1) {
-                specialMessage1.textContent = CONFIG.messages.specialMessage;
+                specialMessage1.innerHTML = CONFIG.messages.specialMessage
+                    .split('\n\n').map(p => `<p>${p}</p>`).join('');
             }
             
             const specialMessage2 = document.getElementById('specialMessage2');
@@ -79,6 +158,74 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Apply config on load
     applyConfig();
+
+    // Playful love question
+    const yesButton = document.getElementById('yesBtn');
+    const noButton = document.getElementById('noBtn');
+    const questionButtons = document.getElementById('questionButtons');
+    const yesResponse = document.getElementById('yesResponse');
+    let noAttempts = 0;
+    let noIsFinal = false;
+    const noMessages = ['Are you sure? 🥺', 'Think again 😭', 'Really?! 😭💔', 'Nice try 😂', "You can't escape me 😏❤️"];
+
+    function celebrateLove() {
+        yesResponse.classList.add('visible');
+        yesButton.disabled = true;
+        noButton.disabled = true;
+        questionButtons.classList.add('celebrated');
+
+        const celebrationSymbols = ['❤️', '💕', '💖', '✨', '💗', '🎉', '💘'];
+        for (let index = 0; index < 30; index++) {
+            const piece = document.createElement('span');
+            piece.className = 'question-celebration';
+            piece.textContent = celebrationSymbols[Math.floor(Math.random() * celebrationSymbols.length)];
+            piece.style.left = `${Math.random() * 100}vw`;
+            piece.style.top = `${70 + Math.random() * 25}vh`;
+            piece.style.setProperty('--drift-x', `${(Math.random() - 0.5) * 35}vw`);
+            piece.style.animationDelay = `${Math.random() * 0.65}s`;
+            document.body.appendChild(piece);
+            setTimeout(() => piece.remove(), 3500);
+        }
+    }
+
+    function moveNoButton() {
+        if (noIsFinal) return;
+
+        noAttempts++;
+        noButton.textContent = noMessages[Math.min(noAttempts - 1, noMessages.length - 1)];
+        if (noAttempts >= noMessages.length) {
+            noIsFinal = true;
+            noButton.textContent = 'OKAY, I LOVE YOU ❤️';
+            noButton.classList.add('is-final');
+            noButton.style.position = 'relative';
+            return;
+        }
+
+        const parentRect = questionButtons.getBoundingClientRect();
+        const buttonRect = noButton.getBoundingClientRect();
+        const maxLeft = Math.max(0, parentRect.width - buttonRect.width);
+        const maxTop = Math.max(0, parentRect.height - buttonRect.height);
+        noButton.style.position = 'absolute';
+        noButton.style.left = `${Math.random() * maxLeft}px`;
+        noButton.style.top = `${Math.random() * maxTop}px`;
+        noButton.classList.remove('is-moving');
+        void noButton.offsetWidth;
+        noButton.classList.add('is-moving');
+    }
+
+    if (yesButton && noButton) {
+        yesButton.addEventListener('click', celebrateLove);
+        noButton.addEventListener('pointerenter', moveNoButton);
+        noButton.addEventListener('pointerdown', (event) => {
+            if (!noIsFinal) {
+                event.preventDefault();
+                moveNoButton();
+            }
+        });
+        noButton.addEventListener('click', () => {
+            if (noIsFinal) celebrateLove();
+        });
+    }
     
     // Create floating hearts
     function createHearts() {
@@ -97,24 +244,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Music Control
-    const musicToggle = document.getElementById('musicToggle');
-    const bgMusic = document.getElementById('bgMusic');
+    // Music Control via YouTube IFrame API
+    let ytPlayer;
     let isPlaying = false;
 
+    window.onYouTubeIframeAPIReady = function() {
+        ytPlayer = new YT.Player('ytPlayer', {
+            height: '0',
+            width: '0',
+            videoId: 'FPoDwu3odT8',
+            playerVars: { autoplay: 0, loop: 1, playlist: 'FPoDwu3odT8' },
+            events: {
+                onReady: function(e) { e.target.setVolume(60); }
+            }
+        });
+    };
+
+    const musicToggle = document.getElementById('musicToggle');
     musicToggle.addEventListener('click', function() {
+        if (!ytPlayer) return;
         if (isPlaying) {
-            bgMusic.pause();
+            ytPlayer.pauseVideo();
             musicToggle.textContent = '🎵';
             isPlaying = false;
         } else {
-            bgMusic.play().then(() => {
-                musicToggle.textContent = '🔊';
-                isPlaying = true;
-            }).catch(() => {
-                musicToggle.textContent = '❌';
-                console.log('Music could not be played');
-            });
+            ytPlayer.playVideo();
+            musicToggle.textContent = '🔊';
+            isPlaying = true;
         }
     });
 
@@ -393,8 +549,148 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Check Love Meter
+    const checkLoveBtn = document.getElementById('checkLoveBtn');
+    const circleFill = document.getElementById('circleFill');
+    const lovePercent = document.getElementById('lovePercent');
+    const circleMeter = document.querySelector('.circle-meter');
+    const loveInfinity = document.getElementById('loveInfinity');
+    const circumference = 502;
+
+    checkLoveBtn.addEventListener('click', function() {
+        checkLoveBtn.disabled = true;
+        let percent = 0;
+        lovePercent.textContent = '0%';
+
+        // Phase 1: count 0 → 100
+        const counter = setInterval(() => {
+            percent += 1;
+            const offset = circumference - (percent / 100) * circumference;
+            circleFill.style.strokeDashoffset = Math.max(offset, 0);
+            lovePercent.textContent = percent + '%';
+
+            if (percent >= 100) {
+                clearInterval(counter);
+
+                // Phase 2: overfill beyond 100
+                setTimeout(() => {
+                    circleMeter.classList.add('breaking');
+                    circleFill.style.transition = 'stroke-dashoffset 0.8s ease';
+                    circleFill.style.strokeDashoffset = -80;
+                    lovePercent.textContent = '999%';
+
+                    // Phase 3: BOOM
+                    setTimeout(() => {
+                        circleMeter.classList.remove('breaking');
+                        circleMeter.classList.add('broken');
+                        lovePercent.textContent = '💥';
+
+                        // Blast sound
+                        const blastCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                        function playBlast() {
+                            // Layer 1: deep boom
+                            const boom = blastCtx.createOscillator();
+                            const boomGain = blastCtx.createGain();
+                            boom.type = 'sine';
+                            boom.frequency.setValueAtTime(120, blastCtx.currentTime);
+                            boom.frequency.exponentialRampToValueAtTime(20, blastCtx.currentTime + 1.2);
+                            boomGain.gain.setValueAtTime(3.0, blastCtx.currentTime);
+                            boomGain.gain.exponentialRampToValueAtTime(0.001, blastCtx.currentTime + 1.5);
+                            boom.connect(boomGain);
+                            boomGain.connect(blastCtx.destination);
+                            boom.start();
+                            boom.stop(blastCtx.currentTime + 1.5);
+
+                            // Layer 2: explosion noise burst
+                            const bufferSize = blastCtx.sampleRate * 1.0;
+                            const buffer = blastCtx.createBuffer(1, bufferSize, blastCtx.sampleRate);
+                            const data = buffer.getChannelData(0);
+                            for (let i = 0; i < bufferSize; i++) {
+                                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 0.2);
+                            }
+                            const noise = blastCtx.createBufferSource();
+                            noise.buffer = buffer;
+                            const noiseFilter = blastCtx.createBiquadFilter();
+                            noiseFilter.type = 'bandpass';
+                            noiseFilter.frequency.value = 300;
+                            noiseFilter.Q.value = 0.5;
+                            const noiseGain = blastCtx.createGain();
+                            noiseGain.gain.setValueAtTime(4.0, blastCtx.currentTime);
+                            noiseGain.gain.exponentialRampToValueAtTime(0.001, blastCtx.currentTime + 1.0);
+                            noise.connect(noiseFilter);
+                            noiseFilter.connect(noiseGain);
+                            noiseGain.connect(blastCtx.destination);
+                            noise.start();
+
+                            // Layer 3: sharp crack
+                            const crackBuf = blastCtx.createBuffer(1, blastCtx.sampleRate * 0.1, blastCtx.sampleRate);
+                            const crackData = crackBuf.getChannelData(0);
+                            for (let i = 0; i < crackData.length; i++) {
+                                crackData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / crackData.length, 3);
+                            }
+                            const crack = blastCtx.createBufferSource();
+                            crack.buffer = crackBuf;
+                            const crackGain = blastCtx.createGain();
+                            crackGain.gain.setValueAtTime(5.0, blastCtx.currentTime);
+                            crackGain.gain.exponentialRampToValueAtTime(0.001, blastCtx.currentTime + 0.1);
+                            crack.connect(crackGain);
+                            crackGain.connect(blastCtx.destination);
+                            crack.start();
+
+                            // Layer 4: rumble
+                            const rumble = blastCtx.createOscillator();
+                            const rumbleGain = blastCtx.createGain();
+                            rumble.type = 'sawtooth';
+                            rumble.frequency.setValueAtTime(60, blastCtx.currentTime);
+                            rumble.frequency.exponentialRampToValueAtTime(10, blastCtx.currentTime + 2.0);
+                            rumbleGain.gain.setValueAtTime(1.5, blastCtx.currentTime + 0.1);
+                            rumbleGain.gain.exponentialRampToValueAtTime(0.001, blastCtx.currentTime + 2.0);
+                            rumble.connect(rumbleGain);
+                            rumbleGain.connect(blastCtx.destination);
+                            rumble.start();
+                            rumble.stop(blastCtx.currentTime + 2.0);
+                        }
+
+                        playBlast();
+
+                        createHeartBurst();
+                        createHeartBurst();
+
+                        // Phase 4: infinity
+                        setTimeout(() => {
+                            lovePercent.textContent = '∞';
+                            loveInfinity.classList.add('visible');
+                            createHeartBurst();
+                        }, 700);
+                    }, 900);
+                }, 300);
+            }
+        }, 22);
+    });
+
     // Initialize
     createHearts();
+
+    // Lightbox
+    window.openLightbox = function(src) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeLightbox = function() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    document.getElementById('lightboxImg').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
     
     // Add some initial animations
     setTimeout(() => {

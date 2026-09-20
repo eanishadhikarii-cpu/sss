@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Love Website Generator 💕</title>
     <link rel="stylesheet" href="styles.css">
     <script src="config.js"></script>
@@ -11,14 +11,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Alex+Brush&family=Allura&family=Poppins:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Romantic lock screen -->
+    <section class="lock-screen" id="lockScreen" aria-labelledby="lockTitle">
+        <div class="lock-particles" aria-hidden="true">
+            <span>♡</span><span>✦</span><span>♥</span><span>✧</span><span>♡</span><span>✦</span>
+        </div>
+        <div class="lock-card">
+            <div class="lock-icon" id="lockIcon" aria-hidden="true">🔐</div>
+            <p class="lock-eyebrow">A secret little gift</p>
+            <h1 id="lockTitle">A Little Surprise For Babe ❤️</h1>
+            <p class="lock-intro">This little world is locked…<br>Only you can open it. 🔐</p>
+            <form class="unlock-form" id="unlockForm">
+                <label for="secretCodeInput">Enter the secret code 💕</label>
+                <input id="secretCodeInput" name="secretCode" type="password" inputmode="numeric" autocomplete="off" placeholder="Our special date… 👀" maxlength="24" required>
+                <div class="secret-keypad" id="secretKeypad" aria-label="Secret code keypad">
+                    <button type="button" data-key="1">1</button>
+                    <button type="button" data-key="2">2</button>
+                    <button type="button" data-key="3">3</button>
+                    <button type="button" data-key="4">4</button>
+                    <button type="button" data-key="5">5</button>
+                    <button type="button" data-key="6">6</button>
+                    <button type="button" data-key="7">7</button>
+                    <button type="button" data-key="8">8</button>
+                    <button type="button" data-key="9">9</button>
+                    <button type="button" class="keypad-action" data-key="clear">C</button>
+                    <button type="button" data-key="0">0</button>
+                    <button type="button" class="keypad-action" data-key="backspace" aria-label="Delete last digit">⌫</button>
+                </div>
+                <button type="submit" id="unlockButton">Unlock Your Surprise ❤️</button>
+                <p class="unlock-message" id="unlockMessage" role="status" aria-live="polite"></p>
+            </form>
+            <div class="unlock-welcome" id="unlockWelcome" aria-live="polite">
+                <strong>Welcome, Babe ❤️</strong>
+                <span>I made this little world just for you. 🥹</span>
+            </div>
+            <p class="lock-signature">Made with ❤️ by Eanish</p>
+        </div>
+    </section>
+
     <!-- Music Control -->
     <div class="music-control">
         <button id="musicToggle" class="music-btn">🎵</button>
-        <audio id="bgMusic" loop>
-            <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1bab.mp3" type="audio/mp3">
-            <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73c3a.mp3" type="audio/mp3">
-        </audio>
     </div>
+    <div id="ytPlayer"></div>
 
     <!-- Floating Hearts Background -->
     <div class="hearts-container"></div>
@@ -31,18 +66,31 @@
             <p class="subtitle" id="subtitle">Add your partner's name in config.js ✨</p>
         </header>
 
+        <!-- Do You Love Me Section -->
+        <section class="love-question-section">
+            <div class="love-question-card">
+                <div class="question-sparkles">
+                    <span>✨</span><span>💫</span><span>⭐</span><span>✨</span><span>💫</span>
+                </div>
+                <h2 class="question-heading">Ranjita, Do You Love Me? 🥺❤️</h2>
+                <p class="question-subtitle">Be honest… there's only one correct answer 😏</p>
+                <div class="question-buttons" id="questionButtons">
+                    <button class="yes-btn" id="yesBtn">YES, OF COURSE! ❤️</button>
+                    <button class="no-btn" id="noBtn">NO 😭</button>
+                </div>
+                <div class="yes-response" id="yesResponse">
+                    <div class="yes-emoji">😭❤️</div>
+                    <p>I KNEW IT! 😭❤️ I love you more than you know!</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Character Section -->
         <section class="characters-section">
             <div class="character-container">
                 <div class="character" id="partner">
                     <div class="character-avatar">
-                        <svg viewBox="0 0 100 100" class="character-svg">
-                            <circle cx="50" cy="35" r="20" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            <path d="M30 60 Q50 45 70 60 Q50 80 30 60" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            <circle cx="42" cy="32" r="2" fill="#FF1493"/>
-                            <circle cx="58" cy="32" r="2" fill="#FF1493"/>
-                            <path d="M45 40 Q50 45 55 40" stroke="#FF1493" stroke-width="2" fill="none"/>
-                        </svg>
+                        <img src="photos/WhatsApp Image 2026-09-20 at 1.56.22 PM.jpeg" alt="Ranjita" class="character-photo">
                     </div>
                     <h3 id="partnerName">Your Love 💕</h3>
                     <p id="partnerDescription">My beautiful angel</p>
@@ -56,13 +104,7 @@
 
                 <div class="character" id="you">
                     <div class="character-avatar">
-                        <svg viewBox="0 0 100 100" class="character-svg">
-                            <circle cx="50" cy="35" r="20" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
-                            <rect x="35" y="55" width="30" height="25" rx="5" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
-                            <circle cx="42" cy="32" r="2" fill="#4682B4"/>
-                            <circle cx="58" cy="32" r="2" fill="#4682B4"/>
-                            <path d="M45 40 Q50 45 55 40" stroke="#4682B4" stroke-width="2" fill="none"/>
-                        </svg>
+                        <img src="photos/WhatsApp Image 2026-09-20 at 1.56.21 PM.jpeg" alt="Eanish" class="character-photo">
                     </div>
                     <h3 id="yourName">Me 💙</h3>
                     <p id="yourDescription">Forever yours</p>
@@ -78,34 +120,38 @@
             </div>
         </section>
 
-        <!-- Memory Gallery -->
-        <section class="memory-gallery">
-            <h2>Our Beautiful Memories Together 💫</h2>
-            <div class="memories-grid">
-                <div class="memory-card" data-memory="late-night">
-                    <div class="memory-icon">🌙</div>
-                    <h3>Late Night Talks</h3>
-                    <p id="memoryLateNight">Those endless conversations that made us forget about time</p>
-                </div>
-                <div class="memory-card" data-memory="first-meeting">
-                    <div class="memory-icon">💫</div>
-                    <h3>The Day We'll Meet</h3>
-                    <p id="memoryFirstMeeting">I know the day we meet will be magical and unforgettable</p>
-                </div>
-                <div class="memory-card" data-memory="care">
-                    <div class="memory-icon">💕</div>
-                    <h3>Your Care & Voice</h3>
-                    <p id="memoryCare">Your caring nature, sweet voice, and adorable cuteness</p>
-                </div>
-            </div>
-        </section>
-
         <!-- Love Meter -->
         <section class="love-meter-section">
             <h2>How Much I Love You 💕</h2>
-            <div class="love-meter">
-                <div class="meter-fill"></div>
-                <span class="love-percentage">∞%</span>
+            <div class="love-meter-wrapper">
+                <div class="circle-meter">
+                    <svg viewBox="0 0 200 200" class="circle-svg">
+                        <defs>
+                            <linearGradient id="loveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#FFB6C1"/>
+                                <stop offset="50%" stop-color="#FF69B4"/>
+                                <stop offset="100%" stop-color="#DC143C"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="80" class="circle-bg"/>
+                        <circle cx="100" cy="100" r="80" class="circle-fill" id="circleFill"/>
+                    </svg>
+                    <div class="circle-center">
+                        <span class="love-percentage" id="lovePercent">0%</span>
+                    </div>
+                </div>
+                <div class="love-meter-emojis">
+                    <span>🤍</span>
+                    <span>💗</span>
+                    <span>💖</span>
+                    <span>💘</span>
+                    <span>💞</span>
+                </div>
+            </div>
+            <button class="check-love-btn" id="checkLoveBtn">❤️ Check Our Love</button>
+            <div class="love-infinity" id="loveInfinity">
+                <div class="infinity-symbol">∞</div>
+                <p>Our love is beyond infinity 💕</p>
             </div>
         </section>
 
@@ -119,6 +165,33 @@
             <div class="kiss-effects"></div>
         </section>
 
+        <!-- Photo Gallery -->
+        <section class="photo-gallery-section">
+            <h2>Our Moments Together 📸</h2>
+            <div class="photo-grid">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.49 PM (1).jpeg" alt="Memory 1" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.49 PM (2).jpeg" alt="Memory 2" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.49 PM.jpeg" alt="Memory 3" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.50 PM (1).jpeg" alt="Memory 4" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.50 PM (2).jpeg" alt="Memory 5" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.50 PM (3).jpeg" alt="Memory 6" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.50 PM.jpeg" alt="Memory 7" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.51 PM (1).jpeg" alt="Memory 8" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.51 PM (2).jpeg" alt="Memory 9" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.51 PM.jpeg" alt="Memory 10" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.52 PM (1).jpeg" alt="Memory 11" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.52 PM (2).jpeg" alt="Memory 12" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.52 PM.jpeg" alt="Memory 13" onclick="openLightbox(this.src)">
+                <img src="photos/WhatsApp Image 2026-09-20 at 1.51.53 PM.jpeg" alt="Memory 14" onclick="openLightbox(this.src)">
+            </div>
+        </section>
+
+        <!-- Lightbox -->
+        <div id="lightbox" onclick="closeLightbox()">
+            <span id="lightboxClose">&times;</span>
+            <img id="lightboxImg" src="" alt="">
+        </div>
+
         <!-- Special Message -->
         <section class="special-message">
             <div class="message-container">
@@ -130,6 +203,7 @@
         </section>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>
