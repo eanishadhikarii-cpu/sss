@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const key = event.target.closest('[data-key]');
             if (!key || secretCodeInput.disabled) return;
 
+            secretCodeInput.blur();
+
             const keyValue = key.dataset.key;
             if (keyValue === 'clear') {
                 secretCodeInput.value = '';
@@ -24,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (secretCodeInput.value.length < secretCodeInput.maxLength) {
                 secretCodeInput.value += keyValue;
             }
-            secretCodeInput.focus();
         });
     }
 
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lockIcon.classList.add('is-open');
         unlockWelcome.classList.add('visible');
         lockScreen.classList.add('unlocking');
+        loadYouTubeApi();
         createUnlockCelebration();
 
         setTimeout(() => document.body.classList.add('unlocked'), 450);
@@ -271,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isPlaying = false;
     const musicToggle = document.getElementById('musicToggle');
     const musicVideoId = 'FPoDwu3odT8';
+    let youtubeApiLoading = false;
 
     function updateMusicToggle(icon, label) {
         musicToggle.textContent = icon;
@@ -313,10 +316,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function loadYouTubeApi() {
+        if (window.YT && window.YT.Player) {
+            createMusicPlayer();
+            return;
+        }
+        if (youtubeApiLoading) return;
+
+        youtubeApiLoading = true;
+        const apiScript = document.createElement('script');
+        apiScript.src = 'https://www.youtube.com/iframe_api';
+        apiScript.async = true;
+        document.head.appendChild(apiScript);
+    }
+
     window.onYouTubeIframeAPIReady = createMusicPlayer;
     musicToggle.disabled = true;
     updateMusicToggle('⌛', 'Loading music');
-    createMusicPlayer();
+    updateMusicToggle('🎵', 'Music available after unlock');
 
     musicToggle.addEventListener('click', function() {
         if (!ytPlayer) return;
