@@ -244,33 +244,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Music Control via YouTube IFrame API
+    // Music Control via YouTube IFrame API. Playback state is driven by the
+    // player so a blocked or unavailable video never leaves a false "playing" state.
     let ytPlayer;
     let isPlaying = false;
+    const musicToggle = document.getElementById('musicToggle');
+    const musicVideoId = 'FPoDwu3odT8';
 
-    window.onYouTubeIframeAPIReady = function() {
+    function updateMusicToggle(icon, label) {
+        musicToggle.textContent = icon;
+        musicToggle.setAttribute('aria-label', label);
+        musicToggle.setAttribute('title', label);
+    }
+
+    function createMusicPlayer() {
+        if (ytPlayer || !window.YT || !window.YT.Player) return;
+
         ytPlayer = new YT.Player('ytPlayer', {
-            height: '0',
-            width: '0',
-            videoId: 'FPoDwu3odT8',
-            playerVars: { autoplay: 0, loop: 1, playlist: 'FPoDwu3odT8' },
+            height: '1',
+            width: '1',
+            videoId: musicVideoId,
+            playerVars: {
+                autoplay: 0,
+                controls: 0,
+                loop: 1,
+                ...(window.location.protocol === 'http:' || window.location.protocol === 'https:' ? { origin: window.location.origin } : {}),
+                playsinline: 1,
+                playlist: musicVideoId,
+                rel: 0
+            },
             events: {
-                onReady: function(e) { e.target.setVolume(60); }
+                onReady: function(event) {
+                    event.target.setVolume(60);
+                    musicToggle.disabled = false;
+                    updateMusicToggle('🎵', 'Play music');
+                },
+                onStateChange: function(event) {
+                    isPlaying = event.data === YT.PlayerState.PLAYING;
+                    updateMusicToggle(isPlaying ? '🔊' : '🎵', isPlaying ? 'Pause music' : 'Play music');
+                },
+                onError: function() {
+                    isPlaying = false;
+                    musicToggle.disabled = true;
+                    updateMusicToggle('⚠️', 'Music is unavailable');
+                }
             }
         });
-    };
+    }
 
-    const musicToggle = document.getElementById('musicToggle');
+    window.onYouTubeIframeAPIReady = createMusicPlayer;
+    musicToggle.disabled = true;
+    updateMusicToggle('⌛', 'Loading music');
+    createMusicPlayer();
+
     musicToggle.addEventListener('click', function() {
         if (!ytPlayer) return;
         if (isPlaying) {
             ytPlayer.pauseVideo();
-            musicToggle.textContent = '🎵';
-            isPlaying = false;
         } else {
             ytPlayer.playVideo();
-            musicToggle.textContent = '🔊';
-            isPlaying = true;
         }
     });
 
