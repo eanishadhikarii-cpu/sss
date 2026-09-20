@@ -244,6 +244,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function initializeScrollReveals() {
+        const revealItems = document.querySelectorAll('.container > .header, .container > section');
+        if (!('IntersectionObserver' in window)) {
+            revealItems.forEach(item => item.classList.add('is-visible'));
+            return;
+        }
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+
+        revealItems.forEach(item => {
+            item.classList.add('scroll-reveal');
+            revealObserver.observe(item);
+        });
+    }
+
     // Music Control via YouTube IFrame API. Playback state is driven by the
     // player so a blocked or unavailable video never leaves a false "playing" state.
     let ytPlayer;
@@ -703,6 +724,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize
     createHearts();
+    initializeScrollReveals();
 
     // Lightbox
     window.openLightbox = function(src) {
