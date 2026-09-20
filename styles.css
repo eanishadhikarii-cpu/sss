@@ -46,6 +46,12 @@ body {
     position: relative;
 }
 
+body > .container > section,
+body > .container > header {
+    content-visibility: auto;
+    contain-intrinsic-size: 100svh;
+}
+
 body::before,
 body::after {
     content: "";
@@ -820,6 +826,24 @@ body:not(.unlocked) {
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    body::before,
+    body::after,
+    .container,
+    .characters-section,
+    .special-message {
+        filter: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.32);
+    }
+
     .container {
         padding: 0.8rem;
     }

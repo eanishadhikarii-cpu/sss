@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const heartsContainer = document.querySelector('.hearts-container');
         const heartSymbols = ['💕', '💖', '💗', '💘', '💝', '💞', '💟', '💌', '💋', '❤️'];
         
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 10; i++) {
             const heart = document.createElement('div');
             heart.className = 'heart';
             heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
