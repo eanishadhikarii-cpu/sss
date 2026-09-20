@@ -82,3 +82,5 @@ public
 # Temporary folders
 tmp/
 temp/
+.vercel
+.env*

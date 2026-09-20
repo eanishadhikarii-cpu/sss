@@ -1342,3 +1342,57 @@ html {
 .photo-gallery-section {
     align-content: start;
 }
+
+@media (min-width: 769px) {
+    .lock-screen {
+        padding: 2.5rem;
+    }
+
+    .lock-card {
+        width: min(92vw, 560px);
+        padding: 3.25rem 4.5rem 2rem;
+        border-radius: 3rem;
+    }
+
+    .lock-icon {
+        width: 124px;
+        height: 124px;
+        margin-bottom: 1.2rem;
+        font-size: 6rem;
+    }
+
+    .lock-eyebrow {
+        font-size: 0.9rem;
+    }
+
+    .lock-card h1 {
+        font-size: clamp(3.5rem, 5vw, 5rem);
+    }
+
+    .lock-intro {
+        font-size: 1.55rem;
+    }
+
+    .unlock-form {
+        max-width: 360px;
+        margin-top: 2rem;
+    }
+
+    .unlock-form input,
+    .unlock-form button {
+        min-height: 60px;
+    }
+
+    .secret-keypad {
+        gap: 0.65rem;
+    }
+
+    .secret-keypad button {
+        min-height: 50px;
+        font-size: 1.1rem;
+    }
+
+    .lock-signature {
+        margin-top: 2.2rem;
+    }
+}
